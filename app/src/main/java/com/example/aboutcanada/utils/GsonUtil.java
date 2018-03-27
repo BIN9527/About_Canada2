@@ -6,17 +6,10 @@ import com.google.gson.Gson;
 
 import java.io.InputStream;
 
-/**
- * 封装的是使用Gson解析json的方法
- *
- */
 public class GsonUtil {
 
 	/**
-	 * 把一个json字符串变成对象
-	 * @param json
-	 * @param cls
-	 * @return
+	 * Converts JSON to an object
 	 */
 	public static <T> T parseJsonToBean(String json, Class<T> cls) {
 		Gson gson = new Gson();
@@ -30,7 +23,9 @@ public class GsonUtil {
 		return t;
 	}
 
-
+	/**
+	 * Read assets file
+	 */
 	public static String readLocalJson(Context context, String fileName){
 		String resultString="";
 		try {

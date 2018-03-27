@@ -1,9 +1,11 @@
 package com.example.aboutcanada.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
+import android.widget.TextView;
 
 import com.example.aboutcanada.R;
 import com.example.aboutcanada.adapter.XrecyclerviewAdapter;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements XRecyclerView.Loa
     private XRecyclerView mXrecyclerview;
     private List<DataBean.RowsBean> mDataBeanList = new ArrayList<>();
     private XrecyclerviewAdapter mXrecyclerviewAdapter;
+    private TextView mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,17 +32,18 @@ public class MainActivity extends AppCompatActivity implements XRecyclerView.Loa
         initData();
     }
 
+    //Initializes a control
     private void initView() {
         mXrecyclerview = (XRecyclerView) findViewById(R.id.xrecyclerview);
+        mTitle = (TextView) findViewById(R.id.title_main);
         mXrecyclerview.setLoadingMoreEnabled(false);
-
-
     }
 
+    //Gets and populates the data
     private void initData() {
-        String json = GsonUtil.readLocalJson(this, "data.json");
-        DataBean dataBean = GsonUtil.parseJsonToBean(json, DataBean.class);
+        DataBean dataBean = getData(this,"data.json",DataBean.class);
         if(dataBean!=null){
+            mTitle.setText(dataBean.getTitle());
             List<DataBean.RowsBean> rows = dataBean.getRows();
             mDataBeanList.addAll(rows);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -51,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements XRecyclerView.Loa
         mXrecyclerview.setLoadingListener(this);
     }
 
-
+    //Refresh data
     @Override
     public void onRefresh() {
         mDataBeanList.clear();
-        String json = GsonUtil.readLocalJson(this, "data.json");
-        DataBean dataBean = GsonUtil.parseJsonToBean(json, DataBean.class);
+        DataBean dataBean = getData(this,"data.json",DataBean.class);
         if(dataBean!=null) {
+            mTitle.setText(dataBean.getTitle());
             List<DataBean.RowsBean> rows = dataBean.getRows();
             mDataBeanList.addAll(rows);
         }
@@ -69,4 +73,11 @@ public class MainActivity extends AppCompatActivity implements XRecyclerView.Loa
     public void onLoadMore() {
 
     }
+
+    //Get JSON and parse
+    private DataBean getData(Context context, String fileName, Class<DataBean> dataBeanClass) {
+        String json = GsonUtil.readLocalJson(context, fileName);
+        return GsonUtil.parseJsonToBean(json, dataBeanClass);
+    }
+
 }
